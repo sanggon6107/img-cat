@@ -1,4 +1,4 @@
-import tkinter.ttk as ttk
+import tkinter.ttk as ttk # 콤보박스는 ttk에 있다.
 from tkinter import *
 
 root = Tk()
