@@ -1,6 +1,5 @@
 import tkinter.ttk as ttk
 from tkinter import *
-import time
 
 # 프로그레스바는 진행 상태를 나타내준다.
 
