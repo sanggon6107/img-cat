@@ -31,17 +31,17 @@ scrollbar.config(command = list_file.yview)
 
 #저장경로 프레임
 path_frame = LabelFrame(root, text = "저장경로")
-path_frame.pack(fill = "x")
+path_frame.pack(fill = "x", padx = 10, ipady = 5, ipadx = 5)
 
 txt_dest_path = Entry(path_frame)
 txt_dest_path.pack(side = "left", fill = "x", expand = True, padx = 5, ipady = 4) # ipad : inner-pad
 
 btn_dest_path = Button(path_frame, text = "찾아보기", width = 10)
-btn_dest_path.pack(side = "right")
+btn_dest_path.pack(side = "right", padx = 5)
 
 # 옵션 프레임
 frame_option = LabelFrame(root, text = "option")
-frame_option.pack(ipadx = 5, ipady = 5)
+frame_option.pack(ipadx = 5, ipady = 5, fill = "x", padx = 10)
 
 # 옵션1 -가로 넓이 옵션
 ## 가로 넓이 레이블
@@ -80,6 +80,28 @@ opt_format = ["jpg", "png", "bmp"]
 cmb_format = ttk.Combobox(frame_option, state = "readonly", values = opt_format, width = 10)
 cmb_format.current(0) # 디폴트는 jpg
 cmb_format.pack(side = "left")
+
+
+# 진행상황 프로그레스바
+
+frame_progress = LabelFrame(root, text = "진행 상황")
+frame_progress.pack(fill = "x", ipadx = 5, ipady = 5, padx = 10)
+
+p_var = DoubleVar()
+progress_bar = ttk.Progressbar(frame_progress, maximum = 100, variable = p_var)
+progress_bar.pack(fill = "x")
+
+# 실행 프레임
+
+frame_run = Frame(root)
+frame_run.pack(fill = "x")
+
+btn_quit = Button(frame_run, padx = 5, pady = 5, text = "끝내기", width = 12, command = root.quit)
+btn_quit.pack(side = "right", padx = 10, pady = 5)
+
+btn_start = Button(frame_run, padx = 5, pady = 5, text = "시작", width = 12)
+btn_start.pack(side = "right", padx = 5, pady = 5)
+
 
 
 
