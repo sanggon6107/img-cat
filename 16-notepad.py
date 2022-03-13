@@ -1,3 +1,4 @@
+import os
 from tkinter import *
 
 root = Tk()
@@ -9,11 +10,17 @@ menu_base = Menu(root)
 
 # 파일 Open, Save 함수
 
+filename = "notepad.txt"
+
 def Open() :
-    pass
+    if os.path.isfile(filename) :
+        with open(filename, "r", encoding = "utf8") as file :
+            text.delete("1.0", END)  # 현재 텍스트 쓰인부분 삭제
+            text.insert(END, file.read()) # 메모장에 파일의 내용을 작성
 
 def Save() :
-    pass
+    with open(filename, "w", encoding = "utf8") as file :
+        file.write(text.get("1.0", END)) # 파일의 모든 내용을 저장
 
 
 
