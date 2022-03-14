@@ -1,8 +1,9 @@
+import os
 import tkinter.ttk as ttk
 import tkinter.messagebox as msgbox
 from tkinter import *
 from tkinter import filedialog # import * 이라도 __all__에 정의하지 않으면 한번에 모두 import 해주지 않는다.
-
+from PIL import Image
 
 root = Tk()
 
@@ -126,6 +127,24 @@ frame_run.pack(fill = "x")
 btn_quit = Button(frame_run, padx = 5, pady = 5, text = "끝내기", width = 12, command = root.quit)
 btn_quit.pack(side = "right", padx = 10, pady = 5)
 
+# 이미지 통합 함수
+def MergeImage() :
+    images = [Image.open(x) for x in list_file.get(0, END)]
+    width_list = [x.size[0] for x in images] # x의 멤버 size는 그 요소가 순서대로 width, height이다.
+    height_list = [x.size[1] for x in images]
+
+    max_width, totla_height = max(width_list), sum(height_list) # 이미지를 합치기 위해, 전체 y값과 넓이 중 최대값을 구한다.
+    
+    result_img = Image.new("RGB", (max_width, totla_height), (255, 255, 255)) # 통합 이미지 그리기 위한 스케치북
+    y_offset = 0 # y 위치 오프셋
+    for img in images :
+        result_img.paste(img, (0, y_offset))
+        y_offset += img.size[1]
+    
+    dest_path = os.path.join(txt_dest_path.get(), "result.jpg")
+    result_img.save(dest_path)
+    msgbox.showinfo("Info", "Done")
+
 # 실행 함수
 
 def Start() :
@@ -140,7 +159,9 @@ def Start() :
     if len(txt_dest_path.get()) == 0 : 
         msgbox.showwarning("경고", "경로를 지정하세요.")
         return
-    pass
+    
+    # 이미지 통합 작업
+    MergeImage()
 
 # 실행 버튼
 btn_start = Button(frame_run, padx = 5, pady = 5, text = "시작", width = 12, command = Start)
