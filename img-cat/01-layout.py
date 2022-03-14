@@ -1,6 +1,8 @@
 import tkinter.ttk as ttk
+import tkinter.messagebox as msgbox
 from tkinter import *
 from tkinter import filedialog # import * 이라도 __all__에 정의하지 않으면 한번에 모두 import 해주지 않는다.
+
 
 root = Tk()
 
@@ -53,10 +55,15 @@ path_frame.pack(fill = "x", padx = 10, ipady = 5, ipadx = 5)
 txt_dest_path = Entry(path_frame)
 txt_dest_path.pack(side = "left", fill = "x", expand = True, padx = 5, ipady = 4) # ipad : inner-pad
 
-def BrowseDestpath() :
-    pass
+# 저장 경로 설정 함수(폴더 선택)
+def BrowseDestPath() :
+    dir = filedialog.askdirectory()
+    if dir == "" :
+        return
+    txt_dest_path.delete(0, END)
+    txt_dest_path.insert(0, dir)
 
-btn_dest_path = Button(path_frame, text = "찾아보기", width = 10, comman = BrowseDestPath)
+btn_dest_path = Button(path_frame, text = "찾아보기", width = 10, command = BrowseDestPath)
 btn_dest_path.pack(side = "right", padx = 5)
 
 # 옵션 프레임
@@ -119,7 +126,24 @@ frame_run.pack(fill = "x")
 btn_quit = Button(frame_run, padx = 5, pady = 5, text = "끝내기", width = 12, command = root.quit)
 btn_quit.pack(side = "right", padx = 10, pady = 5)
 
-btn_start = Button(frame_run, padx = 5, pady = 5, text = "시작", width = 12)
+# 실행 함수
+
+def Start() :
+    # 각 옵션 값을 확인
+    width = cmb_width.get()
+    space = cmb_space.get()
+    format = cmb_format.get()
+
+    if list_file.size() == 0 :
+        msgbox.showwarning("경고", "이미지 파일을 추가하세요.")
+        return
+    if len(txt_dest_path.get()) == 0 : 
+        msgbox.showwarning("경고", "경로를 지정하세요.")
+        return
+    pass
+
+# 실행 버튼
+btn_start = Button(frame_run, padx = 5, pady = 5, text = "시작", width = 12, command = Start)
 btn_start.pack(side = "right", padx = 5, pady = 5)
 
 
