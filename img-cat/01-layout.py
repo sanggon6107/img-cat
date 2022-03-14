@@ -1,21 +1,38 @@
 import tkinter.ttk as ttk
 from tkinter import *
+from tkinter import filedialog # import * 이라도 __all__에 정의하지 않으면 한번에 모두 import 해주지 않는다.
 
 root = Tk()
 
 root.title("GUI programming")
-root.geometry("640x480+300+100")
+root.geometry("640x510+300+100")
 root.resizable(False, False)
 
 # 파일 프레임(파일 추가, 선택 삭제)
 file_frame = Frame(root)
-file_frame.pack(fill = "x")
+file_frame.pack(fill = "x", padx = 10, pady = 10)
 
-btn_add_file = Button(file_frame, padx = 5, pady = 5, width = 12, text = "Add file")
+# 파일 추가 함수
+def AddFile() :
+    files = filedialog.askopenfilenames(title = "이미지 파일을 선택하세요", \
+        filetypes = (("PNG 파일", "*.png"), ("모든 파일", "*.*")), \
+        initialdir="C:/") # 파일 추가 클릭 시 최초 경로를 C드라이브로 설정
+    
+    # 사용자가 선택한 파일을 목록에 추가
+    for file in files :
+        list_file.insert(END, file)
+
+# 파일 삭제 버튼
+def DeleteFile() :
+    for file in reversed(list_file.curselection()) :
+        list_file.delete(file)
+
+# 파일 추가 버튼
+btn_add_file = Button(file_frame, padx = 5, pady = 5, width = 12, text = "Add file", command = AddFile)
 btn_add_file.pack(side = "left")
 
-
-btn_delete_file = Button(file_frame,padx = 5, pady = 5, width = 12, text = "Delete file")
+# 파일 삭제 버튼
+btn_delete_file = Button(file_frame,padx = 5, pady = 5, width = 12, text = "Delete file", command = DeleteFile)
 btn_delete_file.pack(side = "right")
 
 #리스트 프레임
@@ -36,7 +53,10 @@ path_frame.pack(fill = "x", padx = 10, ipady = 5, ipadx = 5)
 txt_dest_path = Entry(path_frame)
 txt_dest_path.pack(side = "left", fill = "x", expand = True, padx = 5, ipady = 4) # ipad : inner-pad
 
-btn_dest_path = Button(path_frame, text = "찾아보기", width = 10)
+def BrowseDestpath() :
+    pass
+
+btn_dest_path = Button(path_frame, text = "찾아보기", width = 10, comman = BrowseDestPath)
 btn_dest_path.pack(side = "right", padx = 5)
 
 # 옵션 프레임
@@ -89,7 +109,7 @@ frame_progress.pack(fill = "x", ipadx = 5, ipady = 5, padx = 10)
 
 p_var = DoubleVar()
 progress_bar = ttk.Progressbar(frame_progress, maximum = 100, variable = p_var)
-progress_bar.pack(fill = "x")
+progress_bar.pack(fill = "x", padx = 10)
 
 # 실행 프레임
 
