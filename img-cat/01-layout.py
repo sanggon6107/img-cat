@@ -130,17 +130,23 @@ btn_quit.pack(side = "right", padx = 10, pady = 5)
 # 이미지 통합 함수
 def MergeImage() :
     images = [Image.open(x) for x in list_file.get(0, END)]
-    width_list = [x.size[0] for x in images] # x의 멤버 size는 그 요소가 순서대로 width, height이다.
-    height_list = [x.size[1] for x in images]
+    width_list, height_list = zip(*(x.size for x in images)) # x의 멤버 size는 그 요소가 순서대로 width, height이다.
 
     max_width, totla_height = max(width_list), sum(height_list) # 이미지를 합치기 위해, 전체 y값과 넓이 중 최대값을 구한다.
     
     result_img = Image.new("RGB", (max_width, totla_height), (255, 255, 255)) # 통합 이미지 그리기 위한 스케치북
     y_offset = 0 # y 위치 오프셋
-    for img in images :
+    #for img in images :
+    #    result_img.paste(img, (0, y_offset))
+    #    y_offset += img.size[1]
+    for idx, img in enumerate(images) :
         result_img.paste(img, (0, y_offset))
         y_offset += img.size[1]
-    
+
+        progress = (idx + 1) / len(images) * 100 # 프로그레스바 연동을 위한 정보 계산.
+        p_var.set(progress)
+        progress_bar.update() # 프로그레스바 업데이트
+
     dest_path = os.path.join(txt_dest_path.get(), "result.jpg")
     result_img.save(dest_path)
     msgbox.showinfo("Info", "Done")
