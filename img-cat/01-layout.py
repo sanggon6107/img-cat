@@ -129,6 +129,30 @@ btn_quit.pack(side = "right", padx = 10, pady = 5)
 
 # 이미지 통합 함수
 def MergeImage() :
+
+    # 가로 넓이
+    img_width = cmb_width.get()
+    if img_width == "원본유지" :
+        img_width = -1 # -1일때는 원본 기준으로 이미지 통합.
+    else :
+        img_width = int(img_width)
+        
+    # 간격
+    ## 리팩토링 필요... 
+    img_space = cmb_space.get()
+    if img_space == "좁게" :
+        img_space = 30
+    elif img_space == "보통" :
+        img_space = 60
+    elif img_space == "넓게" :
+        img_space = 90
+    else : # "없음" 선택
+        img_space = 0
+
+    # 포맷
+    img_format = cmb_format.get()
+
+
     images = [Image.open(x) for x in list_file.get(0, END)]
     width_list, height_list = zip(*(x.size for x in images)) # x의 멤버 size는 그 요소가 순서대로 width, height이다.
 
@@ -136,9 +160,7 @@ def MergeImage() :
     
     result_img = Image.new("RGB", (max_width, totla_height), (255, 255, 255)) # 통합 이미지 그리기 위한 스케치북
     y_offset = 0 # y 위치 오프셋
-    #for img in images :
-    #    result_img.paste(img, (0, y_offset))
-    #    y_offset += img.size[1]
+
     for idx, img in enumerate(images) :
         result_img.paste(img, (0, y_offset))
         y_offset += img.size[1]
