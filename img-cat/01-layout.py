@@ -129,49 +129,69 @@ btn_quit.pack(side = "right", padx = 10, pady = 5)
 
 # 이미지 통합 함수
 def MergeImage() :
+    try :
+        # 가로 넓이
+        img_width = cmb_width.get()
+        if img_width == "원본유지" :
+            img_width = -1 # -1일때는 원본 기준으로 이미지 통합.
+        else :
+            img_width = int(img_width)
+            
+        # 간격
+        img_space = cmb_space.get()
+        if img_space == "좁게" :
+            img_space = 30
+        elif img_space == "보통" :
+            img_space = 60
+        elif img_space == "넓게" :
+            img_space = 90
+        else : # "없음" 선택
+            img_space = 0
 
-    # 가로 넓이
-    img_width = cmb_width.get()
-    if img_width == "원본유지" :
-        img_width = -1 # -1일때는 원본 기준으로 이미지 통합.
-    else :
-        img_width = int(img_width)
+        # 포맷
+        img_format = cmb_format.get().lower() # 확장자명 받아옴.
+
+
+        images = [Image.open(x) for x in list_file.get(0, END)]
+
+        # 이미지 사이즈 리스트에 넣어서 하나씩 처리한다.
         
-    # 간격
-    ## 리팩토링 필요... 
-    img_space = cmb_space.get()
-    if img_space == "좁게" :
-        img_space = 30
-    elif img_space == "보통" :
-        img_space = 60
-    elif img_space == "넓게" :
-        img_space = 90
-    else : # "없음" 선택
-        img_space = 0
-
-    # 포맷
-    img_format = cmb_format.get()
+        image_sizes = [] # [(넓이, 높이), (넓이, 높이) ...]
+        if img_width > -1 :
+            image_sizes = [(int(img_width), int(img_width * x.size[1]/x.size[0])) for x in images]
+        else : # 이미지 원본 사이즈 사용할 경우
+            image_sizes = [(x.size[0], x.size[0]) for x in images]
 
 
-    images = [Image.open(x) for x in list_file.get(0, END)]
-    width_list, height_list = zip(*(x.size for x in images)) # x의 멤버 size는 그 요소가 순서대로 width, height이다.
 
-    max_width, totla_height = max(width_list), sum(height_list) # 이미지를 합치기 위해, 전체 y값과 넓이 중 최대값을 구한다.
-    
-    result_img = Image.new("RGB", (max_width, totla_height), (255, 255, 255)) # 통합 이미지 그리기 위한 스케치북
-    y_offset = 0 # y 위치 오프셋
+        width_list, height_list = zip(*(image_sizes)) # x의 멤버 size는 그 요소가 순서대로 width, height이다.
 
-    for idx, img in enumerate(images) :
-        result_img.paste(img, (0, y_offset))
-        y_offset += img.size[1]
+        max_width, total_height = max(width_list), sum(height_list) # 이미지를 합치기 위해, 전체 y값과 넓이 중 최대값을 구한다.
+        
+        total_height += (img_space * (len(images) - 1)) # 이미지 사이 공백만큼 total height 증가. 
 
-        progress = (idx + 1) / len(images) * 100 # 프로그레스바 연동을 위한 정보 계산.
-        p_var.set(progress)
-        progress_bar.update() # 프로그레스바 업데이트
+        result_img = Image.new("RGB", (max_width, total_height), (255, 255, 255)) # 통합 이미지 그리기 위한 스케치북
+        y_offset = 0 # y 위치 오프셋
 
-    dest_path = os.path.join(txt_dest_path.get(), "result.jpg")
-    result_img.save(dest_path)
-    msgbox.showinfo("Info", "Done")
+        for idx, img in enumerate(images) :
+
+            if img_width > -1 :
+                img = img.resize(image_sizes[idx])
+
+            result_img.paste(img, (0, y_offset))
+            y_offset += (img.size[1] + img_space)
+
+            progress = (idx + 1) / len(images) * 100 # 프로그레스바 연동을 위한 정보 계산.
+            p_var.set(progress)
+            progress_bar.update() # 프로그레스바 업데이트
+
+
+        dest_path = os.path.join(txt_dest_path.get(), "result.{}".format(img_format))
+        result_img.save(dest_path)
+        msgbox.showinfo("Info", "Done")
+    except Exception as err :
+        msgbox.showerror("에러", err)
+
 
 # 실행 함수
 
